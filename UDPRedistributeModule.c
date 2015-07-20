@@ -21,7 +21,7 @@ module_param(verbose, int, 0);
 module_param_array(_redirect_ports_, int, &_redirect_ports_argc_, 0);
 
 MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("Modulo de Proxy para paquetes UDP");
+MODULE_DESCRIPTION("Modulo de redistribución para paquetes UDP");
 MODULE_AUTHOR("Sebastian Blasco");
  
 static struct nf_hook_ops nfho;                          // Net filter hook option struct
