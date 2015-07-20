@@ -158,10 +158,10 @@ int init_module()
  
         nf_register_hook(&nfho);                                                        //registra mi interceptor
 
-        printk(KERN_INFO "Activado UDPRedistributeModule con opciones:\n");
-        printk(KERN_INFO "\tNivel de verbosidad: %d\n", verbose);
-        printk(KERN_INFO "\tPuerto a Interceptar: %d\n", _target_hook_port_);
-        printk(KERN_INFO "\tRedirigir a %d puertos :\n", _redirect_ports_argc_);
+        printk(KERN_INFO "UDPRedistributeModule: Activado con opciones:\n");
+        printk(KERN_INFO "\tNivel de verbosidad %d\n", verbose);
+        printk(KERN_INFO "\tPuerto a Interceptar %d\n", _target_hook_port_);
+        printk(KERN_INFO "\tRedirigir a %d puertos \n", _redirect_ports_argc_);
         for (i = 0; i < _redirect_ports_argc_; i++) {
                 printk(KERN_INFO "\t\t%d\n", _redirect_ports_[i]);
         }
@@ -172,5 +172,5 @@ int init_module()
 void cleanup_module()
 {
         nf_unregister_hook(&nfho);     
-        printk(KERN_INFO "Eliminado UDPRedistributeModule \n");
+        printk(KERN_INFO "UDPRedistributeModule: Eliminado \n");
 }
