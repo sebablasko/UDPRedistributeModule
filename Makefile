@@ -5,5 +5,5 @@ PWD := $(shell pwd)
 default:
 	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
 
-all:
+clean:
 	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) clean
