@@ -116,6 +116,9 @@ unsigned int hook_func(
                         //updated_dest_port = _redirect_ports_[i%(sizeof(_redirect_ports_)/sizeof(_redirect_ports_[0]))];
                         updated_dest_port = _redirect_ports_[i%_redirect_ports_argc_];
 
+                        if(verbose > 1)
+                                printk(KERN_INFO "UDPRedistributeModule: Packet from interface: %s\n",in->name);
+
                         if(verbose > 0)
                                 printk(KERN_INFO "UDPRedistributeModule: UPDATE DestPort: %u -> %u\n",
                                         ntohs(udp_header->dest),
