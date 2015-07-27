@@ -15,6 +15,10 @@ static int _redirect_ports_[1024];
 static int _redirect_ports_argc_ = 0;
 static int verbose = 2;
 
+#define IP_HDR_LEN 20
+#define UDP_HDR_LEN 8
+#define TOT_HDR_LEN 28
+
         /* Habilito opcion para modificar las varibales si me las pasan al instalar el modulo */
 module_param(_target_hook_port_, int, 0);
 module_param(verbose, int, 0);
@@ -64,7 +68,8 @@ __be16 udp_checksum(struct iphdr* iphdr, struct udphdr* udphdr, unsigned char* d
 
         dealloc(padded_data);
 
-        return (__be16) ~sum;
+        //return (__be16) ~sum;
+        return 0;
 }
 
 
@@ -86,7 +91,8 @@ unsigned int hook_func(
                 return NF_ACCEPT;
         }
  
-        ip_header = (struct iphdr *)skb_network_header(skb);                            // Tomar el header de red
+        //ip_header = (struct iphdr *)skb_network_header(skb);                            // Tomar el header de red
+        ip_header = (struct iphdr *) skb_header_pointer (skb, 0, 0, NULL);                // Tomar el header de red forma 2 fix
 
         /* Recuperar información del Header IP */
         src_ip = (unsigned int)ip_header->saddr;                                        // Source IP
@@ -98,7 +104,8 @@ unsigned int hook_func(
         if (ip_header->protocol == _target_hook_protocol_) {                            // Revisar que sea protocolo UDP en el header de red
 
                 //udp_header = (struct udphdr *)(skb_transport_header(skb)+20);         // El hack!!!!
-                udp_header = (struct udphdr *)skb_transport_header(skb);                // Tomar el header de transporte
+                //udp_header = (struct udphdr *)skb_transport_header(skb);                // Tomar el header de transporte
+                udp_header = (struct udphdr *) skb_header_pointer (skb, IP_HDR_LEN, 0, NULL);   // Tomar el header de transporte forma 2 fix
 
                 /* Obtener datos de los puertos del header UDP */
                 src_port = (unsigned int)ntohs(udp_header->source);                     // Source Port
@@ -125,7 +132,7 @@ unsigned int hook_func(
                                         updated_dest_port);
 
                         if(verbose > 1)
-                                printk(KERN_INFO "UDPRedistributeModule: UPDATE Checksum: %u -> %u\n",
+                                printk(KERN_INFO "UDPRedistributeModule: Recalculation of Checksum: %u -> %u\n",
                                         udp_header->check,
                                         udp_checksum(ip_header, udp_header, transport_data));
 
