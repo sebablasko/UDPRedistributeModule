@@ -69,6 +69,7 @@ __be16 udp_checksum(struct iphdr* iphdr, struct udphdr* udphdr, unsigned char* d
         dealloc(padded_data);
 
         //return (__be16) ~sum;
+        //TODO: Corregir funcion para calcular el checksum!
         return 0;
 }
 
