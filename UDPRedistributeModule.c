@@ -73,10 +73,10 @@ static unsigned int hook_func(
 
   if (iph->protocol == IPPROTO_UDP){
 
-    if(verbose)
+    if(verbose > 2)
       printk("%s: skb %p len %u data_len %u\n", MODULE_NAME, skb, skb->len, skb->data_len);
 
-    if(verbose)
+    if(verbose > 2)
      printk("%s: IP at [%i] in %s out %s %pI4 -> %pI4 proto %hhu\n",
         MODULE_NAME,
         (int)((u8 *)iph - (u8 *)skb->data),
@@ -90,7 +90,7 @@ static unsigned int hook_func(
 
     udph = udp_hdr(skb);
 
-    if(verbose)
+    if(verbose > 2)
       printk("%s: UDP at [%i]: %hu -> %hu len %hu\n",
         MODULE_NAME,
         (int)((char*) udph - (char*) iph),
@@ -103,6 +103,7 @@ static unsigned int hook_func(
       get_random_bytes(&i, sizeof(i));
 
       udph->dest=(unsigned short) htons(start_redirect_port+(i%number_redirect_ports));
+      if(verbose > 1)
         printk("%s: Updated to %hu\n", MODULE_NAME, ntohs(udph->dest));
     }
   }
