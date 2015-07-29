@@ -14,14 +14,20 @@ static int verbose = DEFAULT_VERBOSE_LEVEL;
 static int hook_port = DEFAULT_HOOK_PORT;
 static int number_redirect_ports = DEFAULT_NUMBER_REDIRECT_PORTS;
 static int start_redirect_port = DEFAULT_START_REDIRECT_PORT;
+static int port_sched = PORT_SCHED_RANDOM;
+
+static unsigned int counter;
 
   /*  Get params from insmod  */
 module_param(hook_port, int, 0);
 module_param(verbose, int, 0);
 module_param(number_redirect_ports, int, 0);
 module_param(start_redirect_port, int, 0);
+module_param(port_sched, int, 0);
 
 int init_module(){
+        counter = 0;
+
         nfho.hook     = hook_func;
         nfho.hooknum  = NF_INET_PRE_ROUTING;                                           
         nfho.pf       = PF_INET;                                                            
@@ -42,8 +48,17 @@ void cleanup_module()
 void printOptions(void){
         int i;
         printk(KERN_INFO "%s: Options:\n", MODULE_NAME);
-        printk(KERN_INFO "\tVerbosity Level:\t %d\n", verbose);
-        printk(KERN_INFO "\tHooking Port:\t %d\n", hook_port);
+        printk(KERN_INFO "\tVerbosity Level\t %d\n", verbose);
+        printk(KERN_INFO "\tHooking Port\t %d\n", hook_port);
+        printk(KERN_INFO "\tPort Schedule\t");
+        switch(port_sched){
+          case PORT_SCHED_RANDOM:
+            printk("Random\n");
+            break;
+          case PORT_SCHED_SEQUENTIAL:
+            printk("Sequential\n");
+            break;
+        }
         printk(KERN_INFO "\tRedirect to %d Ports\n", number_redirect_ports);
         for (i = 0; i < number_redirect_ports; i++) {
                 printk(KERN_INFO "\t\t%d\n", (start_redirect_port+i));
@@ -100,9 +115,17 @@ static unsigned int hook_func(
 
     if(ntohs(udph->dest)==hook_port){
       unsigned int i;
-      get_random_bytes(&i, sizeof(i));
 
-      udph->dest=(unsigned short) htons(start_redirect_port+(i%number_redirect_ports));
+      switch(port_sched){
+        case PORT_SCHED_RANDOM:
+          get_random_bytes(&i, sizeof(i));
+          udph->dest=(unsigned short) htons(start_redirect_port+(i%number_redirect_ports));
+          break;
+        case PORT_SCHED_SEQUENTIAL:
+          udph->dest=(unsigned short) htons(start_redirect_port+((counter++)%number_redirect_ports));
+          break;
+      }
+      
       if(verbose > 1)
         printk("%s: Updated to %hu\n", MODULE_NAME, ntohs(udph->dest));
     }

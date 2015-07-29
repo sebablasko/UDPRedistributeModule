@@ -1,10 +1,11 @@
 
 #define MODULE_NAME "UDPRedistributeModule"
-
 #define DEFAULT_HOOK_PORT 13131
 #define DEFAULT_VERBOSE_LEVEL 2
 #define DEFAULT_START_REDIRECT_PORT 1820
 #define DEFAULT_NUMBER_REDIRECT_PORTS 1
+#define PORT_SCHED_RANDOM 1
+#define PORT_SCHED_SEQUENTIAL 2
 
 static unsigned int hook_func(
                 unsigned int hooknum,

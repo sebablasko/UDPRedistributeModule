@@ -14,6 +14,7 @@ Instalación
 
 EJ.
 
-`sudo insmod UDPRedistributeModule.ko verbose=2 hook_port=13131 start_redirect_port=1820 number_redirect_ports=4`
+`sudo insmod UDPRedistributeModule.ko verbose=2 hook_port=13131 start_redirect_port=1820 number_redirect_ports=4 port_sched={1,2}`
+donde port_sched puede ser 1) Random o 2) secuencial (no protegido)
 
 Lo cual activa el módulo para redirijir los paquetes hacia el puerto 13131 a los puertos 1820, 1821, 1822 y 1823
